@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>我的網球祕密基地</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body{
+    margin:0;
+    padding:0;
+    background:#ecfdf5;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    overflow:hidden;
+}
+
+@keyframes breathe{
+    0%,100%{
+        transform:scale(0.9);
+    }
+    50%{
+        transform:scale(1.15);
+    }
+}
+
+.breathe{
+    animation:breathe 5s infinite ease-in-out;
+}
+
+.card{
+    background:white;
+    border-radius:28px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+.fade{
+    animation:fade .4s ease;
+}
+
+@keyframes fade{
+    from{opacity:0;transform:translateY(10px);}
+    to{opacity:1;transform:translateY(0);}
+}
+</style>
+</head>
+
+<body>
+
+<div id="app" class="h-screen w-screen p-4 flex items-center justify-center"></div>
+
+<script>
+
+const app = document.getElementById("app");
+
+let state = {
+    step:1,
+    smash:0,
+    selectedReasons:[],
+    selectedRequest:""
+};
+
+const reasons = [
+"大家都誤會我了。",
+"不是我先開始的。",
+"我已經認錯了還一直被罵。",
+"大人的聲音太大聲讓我害怕。",
+"我想解釋可是沒有人聽。"
+];
+
+const requests = [
+"我想自己安靜一下。",
+"我希望有人先聽我說。",
+"我現在需要一個抱抱。"
+];
+
+function render(){
+
+if(state.step===1){
+
+app.innerHTML = `
+<div class="card fade w-full max-w-md h-[92vh] p-6 flex flex-col justify-between bg-gradient-to-b from-emerald-50 to-white">
+
+<div>
+<div class="text-center">
+<div class="text-5xl mb-3">🎾</div>
+
+<h1 class="text-3xl font-black text-emerald-800">
+我的網球祕密基地
+</h1>
+
+<p class="mt-3 text-emerald-700 font-bold">
+不二周助陪你整理情緒 🌿
+</p>
+</div>
+
+<div class="mt-8">
+<div class="w-full h-5 bg-gray-200 rounded-full overflow-hidden">
+<div 
+class="h-full bg-red-400 transition-all duration-100"
+style="width:${state.smash * 4}%">
+</div>
+</div>
+
+<p class="text-center mt-2 font-bold text-gray-600">
+情緒釋放度 ${Math.min(state.smash * 4,100)}%
+</p>
+</div>
+
+<div class="flex justify-center mt-8">
+<button id="smashBtn"
+class="w-52 h-52 rounded-full bg-yellow-300 text-7xl border-8 border-white shadow-xl active:scale-90 transition">
+🎾
+</button>
+</div>
+
+<p class="text-center text-lg font-black text-emerald-800 mt-6">
+現在心裡很氣嗎？<br>
+用力點網球，把情緒打出去！
+</p>
+</div>
+
+<div class="text-center text-sm text-gray-500">
+再點 ${Math.max(25-state.smash,0)} 下
+</div>
+
+</div>
+`;
+
+document.getElementById("smashBtn").onclick = ()=>{
+state.smash++;
+
+if(state.smash>=25){
+state.step=2;
+}
+
+render();
+};
+
+}
+
+if(state.step===2){
+
+app.innerHTML = `
+<div class="card fade w-full max-w-md h-[92vh] p-6 flex flex-col justify-center items-center bg-gradient-to-b from-emerald-50 to-white">
+
+<div class="text-3xl mb-3">🌿</div>
+
+<h2 class="text-3xl font-black text-emerald-800 text-center">
+跟著網球一起深呼吸
+</h2>
+
+<p class="mt-4 text-center text-gray-600 font-bold leading-relaxed">
+會生氣、會委屈，<br>
+不代表你是壞小孩。
+</p>
+
+<div class="w-40 h-40 rounded-full bg-emerald-300 breathe flex items-center justify-center text-6xl mt-10 shadow-xl">
+🎾
+</div>
+
+<p class="mt-10 text-2xl font-black text-emerald-700">
+慢慢吸氣～慢慢吐氣～
+</p>
+
+<button id="next2"
+class="mt-10 bg-emerald-600 text-white px-8 py-4 rounded-2xl text-xl font-black shadow-lg">
+我冷靜一點了
+</button>
+
+</div>
+`;
+
+document.getElementById("next2").onclick = ()=>{
+state.step=3;
+render();
+};
+
+}
+
+if(state.step===3){
+
+let htmlReasons = "";
+
+reasons.forEach((r,i)=>{
+const active = state.selectedReasons.includes(r);
+
+htmlReasons += `
+<button
+onclick="toggleReason(${i})"
+class="w-full text-left p-4 rounded-2xl border-2 transition mb-3
+${active ? 'bg-emerald-500 text-white border-emerald-600' : 'bg-white border-emerald-100'}">
+${r}
+</button>
+`;
+});
+
+app.innerHTML = `
+<div class="card fade w-full max-w-md h-[92vh] p-6 flex flex-col bg-gradient-to-b from-emerald-50 to-white">
+
+<div>
+<div class="text-4xl">🎾</div>
+
+<h2 class="text-2xl font-black text-emerald-800 mt-2">
+剛剛最讓你難過的是？
+</h2>
+
+<p class="text-gray-600 font-bold mt-2">
+可以多選喔
+</p>
+</div>
+
+<div class="mt-6 overflow-auto">
+${htmlReasons}
+</div>
+
+<button id="next3"
+class="mt-4 bg-emerald-600 text-white py-4 rounded-2xl text-xl font-black">
+下一步
+</button>
+
+</div>
+`;
+
+document.getElementById("next3").onclick = ()=>{
+if(state.selectedReasons.length===0){
+alert("請先選一個原因");
+return;
+}
+state.step=4;
+render();
+};
+
+}
+
+if(state.step===4){
+
+let htmlReq = "";
+
+requests.forEach((r,i)=>{
+const active = state.selectedRequest===r;
+
+htmlReq += `
+<button
+onclick="selectRequest(${i})"
+class="w-full text-left p-4 rounded-2xl border-2 transition mb-4
+${active ? 'bg-emerald-500 text-white border-emerald-600' : 'bg-white border-emerald-100'}">
+${r}
+</button>
+`;
+});
+
+app.innerHTML = `
+<div class="card fade w-full max-w-md h-[92vh] p-6 flex flex-col bg-gradient-to-b from-emerald-50 to-white">
+
+<div class="text-4xl">💬</div>
+
+<h2 class="text-2xl font-black text-emerald-800 mt-3">
+你現在希望大人怎麼做？
+</h2>
+
+<div class="mt-8">
+${htmlReq}
+</div>
+
+<button id="next4"
+class="mt-auto bg-emerald-600 text-white py-4 rounded-2xl text-xl font-black">
+生成我的情緒小卡
+</button>
+
+</div>
+`;
+
+document.getElementById("next4").onclick = ()=>{
+if(!state.selectedRequest){
+alert("請選一個希望");
+return;
+}
+state.step=5;
+render();
+};
+
+}
+
+if(state.step===5){
+
+let reasonsHtml = "";
+state.selectedReasons.forEach(r=>{
+reasonsHtml += `<li class="mb-2">${r}</li>`;
+});
+
+app.innerHTML = `
+<div class="card fade w-full max-w-md h-[92vh] p-6 flex flex-col bg-gradient-to-b from-yellow-50 to-white overflow-auto">
+
+<div class="text-center">
+<div class="text-5xl">🎉</div>
+
+<h2 class="text-3xl font-black text-emerald-800 mt-3">
+我的真心話小卡
+</h2>
+</div>
+
+<div class="mt-6 bg-white rounded-3xl p-5 border-4 border-yellow-300 shadow">
+
+<div class="text-sm text-gray-400 font-bold">
+我現在的感覺
+</div>
+
+<div class="text-2xl font-black text-red-500 mt-2">
+我很委屈、很難過
+</div>
+
+<div class="mt-6">
+<div class="text-sm text-gray-400 font-bold mb-2">
+讓我難過的原因
+</div>
+
+<ul class="list-disc pl-5 text-emerald-900 font-bold">
+${reasonsHtml}
+</ul>
+</div>
+
+<div class="mt-6">
+<div class="text-sm text-gray-400 font-bold mb-2">
+我現在希望
+</div>
+
+<div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 text-blue-800 font-black">
+💡 ${state.selectedRequest}
+</div>
+</div>
+
+<div class="mt-6 bg-emerald-50 rounded-2xl p-4 border border-emerald-200">
+<div class="font-black text-emerald-800 mb-2">
+給大人的小提醒
+</div>
+
+<p class="text-sm leading-relaxed text-emerald-900">
+孩子現在不是故意頂嘴，
+而是情緒太滿了。
+先接住情緒，再處理事情。
+</p>
+</div>
+
+</div>
+
+<p class="mt-5 text-center text-lg font-black text-emerald-800">
+現在可以把這張卡給大人看 🌿
+</p>
+
+<button id="restart"
+class="mt-5 bg-emerald-600 text-white py-4 rounded-2xl text-xl font-black">
+重新開始
+</button>
+
+</div>
+`;
+
+document.getElementById("restart").onclick = ()=>{
+state = {
+step:1,
+smash:0,
+selectedReasons:[],
+selectedRequest:""
+};
+render();
+};
+
+}
+
+}
+
+window.toggleReason = function(index){
+const reason = reasons[index];
+
+if(state.selectedReasons.includes(reason)){
+state.selectedReasons = state.selectedReasons.filter(r=>r!==reason);
+}else{
+state.selectedReasons.push(reason);
+}
+
+render();
+}
+
+window.selectRequest = function(index){
+state.selectedRequest = requests[index];
+render();
+}
+
+render();
+
+</script>
+
+</body>
+</html>
